@@ -18,6 +18,7 @@ instance Num Point where
                               in Point x x x
     fromInteger a = let x = fromInteger a 
                     in Point x x x
+
 instance Fractional Point where
     (/) (Point x1 x2 x3) (Point y1 y2 y3) = Point (x1/y1) (x2/y2) (x3/y3) 
     fromRational a = let x = fromRational a 
@@ -141,16 +142,10 @@ mutation p = do
 
 main :: IO ()
 main = do
-    repeat_main'  0
-    where
-        repeat_main' 20 = putStrLn ""
-        repeat_main' n = do
-            let first_population    = create_pop
-                step_of_evolution p = p >>= crossingover >>= sequence . map mutation >>= return . sort_pop >>= selection
-                print_pop p         = p >>= (mapM_ putStrLn).(map show)
-            p' <- iterate step_of_evolution first_population !! 200
-            let m' = head $ sort_pop p'
-            putStrLn ("Лучшая особь\t"       ++ (show m'))
-            putStrLn ("Целевое значение\t\t" ++ (show $ target_fun m'))
-            putStrLn ""
-            repeat_main' (n+1)
+    let first_population    = create_pop
+        step_of_evolution p = p >>= crossingover >>= sequence . map mutation >>= return . sort_pop >>= selection
+        print_pop         p = p >>= (mapM_ putStrLn).(map show)
+    p' <- (iterate step_of_evolution first_population) !! 200
+    let m' = head $ sort_pop p'
+    putStrLn ("Лучшая особь\t"       ++ (show m'))
+    putStrLn ("Целевое значение\t\t" ++ (show $ target_fun m'))
